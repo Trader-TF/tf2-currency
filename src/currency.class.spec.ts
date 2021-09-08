@@ -283,10 +283,13 @@ describe('Currency', () => {
         metal: 32.11,
       });
 
-      currency.addCurrency({
-        keys: 3,
-        metal: 30.55,
-      }, 60);
+      currency.addCurrency(
+        {
+          keys: 3,
+          metal: 30.55,
+        },
+        60,
+      );
 
       expect(currency).toHaveProperty('keys', 57);
       expect(currency).toHaveProperty('metal', 2.66);
@@ -340,7 +343,7 @@ describe('Currency', () => {
           keys: 53,
           metal: 32.11,
         });
-  
+
         currency.removeScrap(365);
       } catch (e) {
         err = e;
@@ -356,7 +359,7 @@ describe('Currency', () => {
           keys: 0,
           metal: 32.11,
         });
-  
+
         currency.removeScrap(365, 60);
       } catch (e) {
         err = e;
@@ -425,10 +428,13 @@ describe('Currency', () => {
         metal: 32.11,
       });
 
-      currency.removeCurrency({
-        keys: 2,
-        metal: 36,
-      }, 60);
+      currency.removeCurrency(
+        {
+          keys: 2,
+          metal: 36,
+        },
+        60,
+      );
 
       expect(currency).toHaveProperty('keys', 50);
       expect(currency).toHaveProperty('metal', 56.11);
@@ -456,7 +462,7 @@ describe('Currency', () => {
           keys: 0,
           metal: 32.11,
         });
-  
+
         currency.removeCurrency({
           keys: 2,
           metal: 31,

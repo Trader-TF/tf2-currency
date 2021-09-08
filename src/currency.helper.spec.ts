@@ -83,7 +83,7 @@ describe('CurrencyHelper', () => {
     it('Throw error', () => {
       let err;
       try {
-        fromKeysToCurrency(1.2)
+        fromKeysToCurrency(1.2);
       } catch (e) {
         err = e;
       }

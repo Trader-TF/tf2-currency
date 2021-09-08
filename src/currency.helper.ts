@@ -44,7 +44,7 @@ export function fromKeysToCurrency(value: number, conversion = 0) {
   return {
     keys,
     metal,
-  }
+  };
 }
 
 export function isEqual(currencyA: ICurrency, currencyB: ICurrency): boolean {

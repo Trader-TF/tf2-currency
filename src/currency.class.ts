@@ -154,17 +154,18 @@ export class Currency implements ICurrency {
   }
 
   removeKeys(value: number, conversion?: number) {
-    return this.removeCurrency(fromKeysToCurrency(value, conversion), conversion);
+    return this.removeCurrency(
+      fromKeysToCurrency(value, conversion),
+      conversion,
+    );
   }
 
   removeCurrency(currency: ICurrency, conversion?: number) {
     this.removeMetal(currency.metal, conversion);
-    
+
     this.keys -= currency.keys;
     if (this.keys < 0) {
-      throw new CurrencyError(
-        'Cannot remove said value.',
-      );
+      throw new CurrencyError('Cannot remove said value.');
     }
 
     return this;
