@@ -50,7 +50,7 @@ export class Currency implements ICurrency {
       );
     }
 
-    const conversionInScrap = conversion ? toScrap(conversion) : 0;
+    const conversionInScrap = toScrap(conversion);
     const metalInScrap = toScrap(this.metal);
     const keysInScrap = this.keys * conversionInScrap;
     return keysInScrap + metalInScrap;
@@ -63,7 +63,7 @@ export class Currency implements ICurrency {
       );
     }
 
-    const conversionInScrap = conversion ? toScrap(conversion) : 0;
+    const conversionInScrap = toScrap(conversion);
     const metalInScrap = toScrap(this.metal);
     const metalInKeys = conversion
       ? round(metalInScrap / conversionInScrap)
