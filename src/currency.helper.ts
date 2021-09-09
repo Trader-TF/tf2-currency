@@ -1,4 +1,4 @@
-import { CurrencyError } from '.';
+import { CurrencyError } from './currency.error';
 import { ICurrency } from './currency.interface';
 
 /**

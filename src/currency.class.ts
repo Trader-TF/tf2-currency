@@ -1,4 +1,5 @@
 import {
+  round,
   toScrap,
   toRefined,
   fromKeysToCurrency,
@@ -10,7 +11,6 @@ import {
 } from './currency.helper';
 import { CurrencyError } from './currency.error';
 import { ICurrency } from './currency.interface';
-import { round } from '.';
 
 export class Currency implements ICurrency {
   public keys: number;
