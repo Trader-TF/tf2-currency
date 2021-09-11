@@ -1,3 +1,4 @@
+import { Currency } from './currency.class';
 import { CurrencyError } from './currency.error';
 import { ICurrency } from './currency.interface';
 
@@ -99,4 +100,8 @@ export function isSmallerOrEqual(
     currencyA.keys < currencyB.keys ||
     (currencyA.keys === currencyB.keys && currencyA.metal <= currencyB.metal)
   );
+}
+
+export function c(currency: Partial<ICurrency>): Currency {
+  return new Currency(currency);
 }

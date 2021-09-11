@@ -10,7 +10,9 @@ import {
   isSmaller,
   isBiggerOrEqual,
   isSmallerOrEqual,
+  c,
 } from './currency.helper';
+import { Currency } from './currency.class';
 
 describe('CurrencyHelper', () => {
   describe('round', () => {
@@ -106,7 +108,7 @@ describe('CurrencyHelper', () => {
   });
 
   describe('fixCurrency', () => {
-    describe('Fixes currency metal input', () => {
+    it('Fixes currency metal input', () => {
       expect(fixCurrency({
         metal: 0.17
       })).toEqual({
@@ -115,7 +117,7 @@ describe('CurrencyHelper', () => {
       })
     });
 
-    describe('Fixes keys input', () => {
+    it('Fixes keys input', () => {
       expect(fixCurrency({
         keys: 15
       })).toEqual({
@@ -272,4 +274,13 @@ describe('CurrencyHelper', () => {
       ).toEqual(false);
     });
   });
+
+  describe('c', () => {
+    it('Creates Currency object', () => {
+      expect(c({ keys: 12, metal: 12 })).toEqual(new Currency({
+        keys: 12,
+        metal: 12
+      }))
+    });
+  })
 });
