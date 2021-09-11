@@ -29,7 +29,7 @@ export class Currency implements ICurrency {
     }
   }
 
-  static fromScrap(scrap: number, conversion: number = 0) {
+  static fromScrap(scrap: number, conversion = 0) {
     const conversionInScrap = toScrap(conversion);
     const keys = conversionInScrap ? Math.floor(scrap / conversionInScrap) : 0;
     const metalInScrap = scrap - keys * conversionInScrap;
@@ -40,11 +40,11 @@ export class Currency implements ICurrency {
     });
   }
 
-  static fromKeys(value: number, conversion: number = 0) {
+  static fromKeys(value: number, conversion = 0) {
     return new Currency(fromKeysToCurrency(value, conversion));
   }
 
-  toScrap(conversion: number = 0) {
+  toScrap(conversion = 0) {
     if (this.keys && !conversion) {
       throw new CurrencyError(
         'Conversion value is required when keys are present.',
@@ -57,7 +57,7 @@ export class Currency implements ICurrency {
     return keysInScrap + metalInScrap;
   }
 
-  toKeys(conversion: number = 0) {
+  toKeys(conversion = 0) {
     if (this.metal && !conversion) {
       throw new CurrencyError(
         'Conversion value is required when metal is present.',
@@ -102,7 +102,7 @@ export class Currency implements ICurrency {
     };
   }
 
-  addScrap(value: number, conversion: number = 0) {
+  addScrap(value: number, conversion = 0) {
     const metalInScrap = toScrap(this.metal);
     let metalToAppend = metalInScrap + value;
     if (conversion) {

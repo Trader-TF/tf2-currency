@@ -9,7 +9,8 @@
     "test:coverage": "npx jest --coverage",
     "build": "npx tsc",
     "format": "npx prettier -w \"./src/**.ts\"",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,11 @@
   "devDependencies": {
     "@semantic-release/git": "^9.0.1",
     "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "@typescript-eslint/parser": "^4.31.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.1.1",
     "prettier": "^2.3.2",
     "semantic-release": "^17.4.7",

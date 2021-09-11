@@ -8,7 +8,7 @@ import { ICurrency } from './currency.interface';
  * @param d number of decimals we round to
  * @returns rounded number
  */
-export function round(n: number, d: number = 2) {
+export function round(n: number, d = 2) {
   const factor = Math.pow(10, d);
   return Math.round(n * factor) / factor;
 }
