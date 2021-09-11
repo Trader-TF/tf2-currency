@@ -1,6 +1,11 @@
 # tf2-currency
 Set of tools that manage operations with tf2 currency. Inspired by [tf2-currencies](https://github.com/Nicklason/node-tf2-currencies) made by Nicklason. Made as a drop in replacement for your plain currency object.
 
+## Advantages over tf2-currencies
+- Fully typed, written in typescript
+- Throughly tested, close to 100 tests
+- More convinience methods for comparing/operating with currency
+
 ## Installation
 `npm install tf2-currency` or via yarn `yarn add tf2-currency`
 
