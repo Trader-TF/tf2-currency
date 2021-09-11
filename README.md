@@ -3,7 +3,7 @@ Set of tools that manage operations with tf2 currency. Inspired by [tf2-currenci
 
 ## Advantages over tf2-currencies
 - Fully typed, written in typescript
-- Throughly tested, close to 100 tests
+- Throughly tested, over 100 tests
 - More convinience methods for comparing/operating with currency
 
 ## Installation

@@ -9,6 +9,7 @@ import {
   isSmaller,
   isBiggerOrEqual,
   isSmallerOrEqual,
+  pluralizeKeys,
 } from './currency.helper';
 import { CurrencyError } from './currency.error';
 import { ICurrency } from './currency.interface';
@@ -19,19 +20,13 @@ export class Currency implements ICurrency {
 
   constructor(currency: Partial<ICurrency>) {
     this.keys = currency.keys || 0;
-    if (this.keys < 0) {
-      throw new CurrencyError('Supplied key value is negative.');
-    }
-
     this.metal = fixMetal(currency.metal || 0);
-    if (this.metal < 0) {
-      throw new CurrencyError('Supplied metal value is negative.');
-    }
   }
 
   static fromScrap(scrap: number, conversion = 0) {
     const conversionInScrap = toScrap(conversion);
-    const keys = conversionInScrap ? Math.floor(scrap / conversionInScrap) : 0;
+    const rounding = scrap < 0 ? Math.ceil : Math.floor;
+    const keys = conversionInScrap ? rounding(scrap / conversionInScrap) : 0;
     const metalInScrap = scrap - keys * conversionInScrap;
     const metal = toRefined(metalInScrap);
     return new Currency({
@@ -81,7 +76,7 @@ export class Currency implements ICurrency {
     let currency = '';
 
     if (this.keys) {
-      currency += `${this.keys} key${this.keys > 1 ? 's' : ''}`;
+      currency += pluralizeKeys(this.keys);
     }
 
     if (this.metal) {
@@ -103,15 +98,11 @@ export class Currency implements ICurrency {
   }
 
   addScrap(value: number, conversion = 0) {
-    const metalInScrap = toScrap(this.metal);
-    let metalToAppend = metalInScrap + value;
-    if (conversion) {
-      const conversionInScrap = toScrap(conversion);
-      const extraKeys = Math.floor(metalToAppend / conversionInScrap);
-      metalToAppend -= extraKeys * conversionInScrap;
-      this.keys += extraKeys;
-    }
-    this.metal = toRefined(metalToAppend);
+    const currentScrapValue = this.toScrap(conversion);
+    const total = currentScrapValue + value;
+    const currency = Currency.fromScrap(total, conversion);
+    this.keys = currency.keys;
+    this.metal = currency.metal;
     return this;
   }
 
@@ -119,61 +110,37 @@ export class Currency implements ICurrency {
     return this.addScrap(toScrap(value), conversion);
   }
 
-  addKeys(value: number, conversion?: number) {
+  addKeys(value: number, conversion: number) {
     return this.addCurrency(fromKeysToCurrency(value, conversion), conversion);
   }
 
   addCurrency(currency: ICurrency, conversion?: number) {
-    this.addMetal(currency.metal, conversion);
-    this.keys += currency.keys;
-
-    return this;
-  }
-
-  removeScrap(value: number, conversion?: number) {
-    const metalInScrap = toScrap(this.metal);
-    const resultScrap = round(metalInScrap - value);
-    if (resultScrap < 0) {
-      if (!conversion) {
-        throw new CurrencyError(
-          'You have to supply conversion value when metal is negative.',
-        );
-      }
-
-      if (!this.keys) {
-        throw new CurrencyError('Cannot remove said value.');
-      }
-
-      const conversionInScrap = toScrap(conversion);
-      this.keys--;
-      this.metal = toRefined(conversionInScrap + resultScrap);
-      return this;
-    }
-
-    this.metal = toRefined(resultScrap);
-    return this;
-  }
-
-  removeMetal(value: number, conversion?: number) {
-    return this.removeScrap(toScrap(value), conversion);
-  }
-
-  removeKeys(value: number, conversion?: number) {
-    return this.removeCurrency(
-      fromKeysToCurrency(value, conversion),
+    return this.addScrap(
+      new Currency(currency).toScrap(conversion),
       conversion,
     );
   }
 
+  removeScrap(value: number, conversion?: number) {
+    return this.addScrap(-value, conversion);
+  }
+
+  removeMetal(value: number, conversion?: number) {
+    return this.addMetal(-value, conversion);
+  }
+
+  removeKeys(value: number, conversion: number) {
+    return this.addKeys(-value, conversion);
+  }
+
   removeCurrency(currency: ICurrency, conversion?: number) {
-    this.removeMetal(currency.metal, conversion);
-
-    this.keys -= currency.keys;
-    if (this.keys < 0) {
-      throw new CurrencyError('Cannot remove said value.');
-    }
-
-    return this;
+    return this.addCurrency(
+      {
+        keys: -currency.keys,
+        metal: -currency.metal,
+      },
+      conversion,
+    );
   }
 
   isEqual(currency: ICurrency) {

@@ -25,9 +25,14 @@ export function toScrap(value: number) {
 }
 
 export function toRefined(value: number) {
-  const metal = Math.floor(value / 9);
+  const isNegative = value < 0;
+  const metal = (isNegative ? -1 : 1) * Math.floor(Math.abs(value) / 9);
   const remainingMetal = value - metal * 9;
-  const rounding = remainingMetal < 5 ? Math.floor : Math.ceil;
+
+  const rounding = (isNegative ? remainingMetal < -5 : remainingMetal < 5)
+    ? Math.floor
+    : Math.ceil;
+
   const scrap = rounding(remainingMetal * 11) / 100;
   return metal + scrap;
 }
@@ -44,7 +49,8 @@ export function fixCurrency(currency: Partial<ICurrency>) {
 }
 
 export function fromKeysToCurrency(value: number, conversion = 0) {
-  const keys = Math.floor(value);
+  const isNegative = value < 0;
+  const keys = isNegative ? Math.ceil(value) : Math.floor(value);
   const metalInKeys = round(value - keys);
   if (metalInKeys && !conversion) {
     throw new CurrencyError(
@@ -104,4 +110,14 @@ export function isSmallerOrEqual(
 
 export function c(currency: Partial<ICurrency>): Currency {
   return new Currency(currency);
+}
+
+export function pluralizeKeys(value: number) {
+  if (value === 0) {
+    return '0 keys';
+  }
+
+  return `${value} ${
+    value < 0 ? (value < -1 ? 'keys' : 'key') : value > 1 ? 'keys' : 'key'
+  }`;
 }

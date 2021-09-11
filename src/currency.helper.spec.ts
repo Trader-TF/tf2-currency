@@ -13,6 +13,7 @@ import {
   c,
 } from './currency.helper';
 import { Currency } from './currency.class';
+import { pluralizeKeys } from '.';
 
 describe('CurrencyHelper', () => {
   describe('round', () => {
@@ -22,6 +23,14 @@ describe('CurrencyHelper', () => {
 
     it('Rounds with 4 decimal numbers', () => {
       expect(round(52.11111111, 4)).toEqual(52.1111);
+    });
+
+    it('Rounds negative with default decimal', () => {
+      expect(round(-52.11111111)).toEqual(-52.11);
+    });
+
+    it('Rounds negative with 4 decimal numbers', () => {
+      expect(round(-52.11111111, 4)).toEqual(-52.1111);
     });
   });
 
@@ -53,6 +62,34 @@ describe('CurrencyHelper', () => {
     it('Converts weapon value #2', () => {
       expect(toScrap(0.61)).toEqual(5.5);
     });
+
+    it('Negative converts refined to scrap #1', () => {
+      expect(toScrap(-14)).toEqual(14 * -9);
+    });
+
+    it('Negative converts refined to scrap #2', () => {
+      expect(toScrap(-14.22)).toEqual(-14 * 9 - 2);
+    });
+
+    it('Negative converts refined to scrap #3', () => {
+      expect(toScrap(-14.88)).toEqual(-14 * 9 - 8);
+    });
+
+    it('Negative converts refined to scrap #4', () => {
+      expect(toScrap(-14.99)).toEqual(-14 * 9 - 9);
+    });
+
+    it('Negative converts refined to scrap #5', () => {
+      expect(toScrap(-0.77)).toEqual(-7);
+    });
+
+    it('Negative converts weapon value #1', () => {
+      expect(toScrap(-0.16)).toEqual(-1.5);
+    });
+
+    it('Negative converts weapon value #2', () => {
+      expect(toScrap(-0.61)).toEqual(-5.5);
+    });
   });
 
   describe('toRefined', () => {
@@ -80,8 +117,36 @@ describe('CurrencyHelper', () => {
       expect(toRefined(5.5)).toEqual(0.61);
     });
 
-    it('Converts weapon value #2', () => {
-      expect(toRefined(1.5)).toEqual(0.16);
+    it('Negative converts weapon value #2', () => {
+      expect(toRefined(-1.5)).toEqual(-0.16);
+    });
+
+    it('Negative converts scrap to refined #1', () => {
+      expect(toRefined(-14 * 9)).toEqual(-14);
+    });
+
+    it('Negative converts scrap to refined #2', () => {
+      expect(toRefined(-14 * 9 - 2)).toEqual(-14.22);
+    });
+
+    it('Negative converts scrap to refined #3', () => {
+      expect(toRefined(-14 * 9 - 8)).toEqual(-14.88);
+    });
+
+    it('Negative converts scrap to refined #4', () => {
+      expect(toRefined(-14 * 9 - 9)).toEqual(-15);
+    });
+
+    it('Negative converts scrap to refined #5', () => {
+      expect(toRefined(-7)).toEqual(-0.77);
+    });
+
+    it('Negative converts weapon value #1', () => {
+      expect(toRefined(-5.5)).toEqual(-0.61);
+    });
+
+    it('Negative converts weapon value #2', () => {
+      expect(toRefined(-1.5)).toEqual(-0.16);
     });
   });
 
@@ -104,6 +169,14 @@ describe('CurrencyHelper', () => {
 
     it('Rounds weapon values down', () => {
       expect(fixMetal(0.17)).toEqual(0.16);
+    });
+
+    it('Rounds negative weapon values up', () => {
+      expect(fixMetal(-0.6)).toEqual(-0.61);
+    });
+
+    it('Rounds negative weapon values down', () => {
+      expect(fixMetal(-0.17)).toEqual(-0.16);
     });
   });
 
@@ -155,6 +228,20 @@ describe('CurrencyHelper', () => {
       }
 
       expect(err).toBeInstanceOf(Error);
+    });
+
+    it('Coverts negative key value', () => {
+      expect(fromKeysToCurrency(-3)).toEqual({
+        keys: -3,
+        metal: 0,
+      });
+    });
+
+    it('Coverts negative key value with conversion', () => {
+      expect(fromKeysToCurrency(-1.2, 62)).toEqual({
+        keys: -1,
+        metal: -12.44,
+      });
     });
   });
 
@@ -287,6 +374,28 @@ describe('CurrencyHelper', () => {
           metal: 12,
         }),
       );
+    });
+  });
+
+  describe('pluralizeKeys', () => {
+    it('Negative plural', () => {
+      expect(pluralizeKeys(-5)).toEqual('-5 keys');
+    });
+
+    it('Negative singular', () => {
+      expect(pluralizeKeys(-1)).toEqual('-1 key');
+    });
+
+    it('0', () => {
+      expect(pluralizeKeys(0)).toEqual('0 keys');
+    });
+
+    it('Positive plural', () => {
+      expect(pluralizeKeys(5)).toEqual('5 keys');
+    });
+
+    it('Positive plural', () => {
+      expect(pluralizeKeys(1)).toEqual('1 key');
     });
   });
 });
