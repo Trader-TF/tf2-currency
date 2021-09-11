@@ -39,6 +39,14 @@ export class Currency implements ICurrency {
     return new Currency(fromKeysToCurrency(value, conversion));
   }
 
+  clone() {
+    return new Currency(this);
+  }
+
+  isEmpty() {
+    return this.keys === 0 && this.metal === 0;
+  }
+
   toScrap(conversion = 0) {
     if (this.keys && !conversion) {
       throw new CurrencyError(

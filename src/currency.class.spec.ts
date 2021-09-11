@@ -731,4 +731,46 @@ describe('Currency', () => {
       );
     });
   });
+
+  describe('clone', () => {
+    it('Clones the object', () => {
+      const currency = new Currency({
+        keys: 50,
+        metal: 20,
+      });
+      const cloneCurrency = currency.clone();
+
+      expect(cloneCurrency).toEqual(currency);
+      expect(cloneCurrency).toBeInstanceOf(Currency);
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('Is empty', () => {
+      expect(
+        new Currency({
+          keys: 0,
+          metal: 0,
+        }).isEmpty(),
+      ).toEqual(true);
+    });
+
+    it('Is not empty #1', () => {
+      expect(
+        new Currency({
+          keys: -1,
+          metal: -20,
+        }).isEmpty(),
+      ).toEqual(false);
+    });
+
+    it('Is not empty #2', () => {
+      expect(
+        new Currency({
+          keys: 2,
+          metal: 0,
+        }).isEmpty(),
+      ).toEqual(false);
+    });
+  });
 });
