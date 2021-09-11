@@ -2,6 +2,7 @@ import {
   round,
   toScrap,
   toRefined,
+  fixMetal,
   fromKeysToCurrency,
   isEqual,
   isBigger,
@@ -62,6 +63,20 @@ describe('CurrencyHelper', () => {
 
     it('Converts scrap to refined #5', () => {
       expect(toRefined(7)).toEqual(0.77);
+    });
+  });
+
+  describe('fixMetal', () => {
+    it('Fixes input metal', () => {
+      expect(fixMetal(53.44444)).toEqual(53.44);
+    });
+
+    it('Keeps same value', () => {
+      expect(fixMetal(12.88)).toEqual(12.88);
+    });
+
+    it('Transfers .99 to 1', () => {
+      expect(fixMetal(1.99)).toEqual(2);
     });
   });
 
