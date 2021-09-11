@@ -17,9 +17,10 @@ export {
     Currency, // Currency class that manages operations
     CurrencyError, // Error thrown by Currency class
     ICurrency, // Interface for currency
+    c, // Create Currency object faster
+    fixCurrency, // Fix partial currency objects
 }
 ```
-
 ### Currency
 #### Instantiation
 ##### new Currency(currency: ICurrency)
@@ -116,3 +117,11 @@ Compares current currency object with supplied one
 #### Currency.prototype.isSmallerOrEqual(currency: ICurrency): boolean
 Compares current currency object with supplied one
 - `currency` we are comparing to
+
+### c(currency: Partial<ICurrency>): Currency
+Creates `Currency` object
+- `currency` from which we are creating the object
+
+### fixCurrency(currency: Partial<ICurrency>): ICurrency
+Fixes partial `currency` object
+- `currency` we are fixing
