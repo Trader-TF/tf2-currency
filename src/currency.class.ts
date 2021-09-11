@@ -20,12 +20,12 @@ export class Currency implements ICurrency {
   constructor(currency: Partial<ICurrency>) {
     this.keys = currency.keys || 0;
     if (this.keys < 0) {
-      throw new CurrencyError('Supplied key value is negative');
+      throw new CurrencyError('Supplied key value is negative.');
     }
 
     this.metal = fixMetal(currency.metal || 0);
     if (this.metal < 0) {
-      throw new CurrencyError('Supplied metal value is negative');
+      throw new CurrencyError('Supplied metal value is negative.');
     }
   }
 

@@ -62,6 +62,13 @@ describe('Currency', () => {
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 44.11);
     });
+
+    it('Has weapon value', () => {
+      const currency = Currency.fromScrap(397.5);
+
+      expect(currency).toHaveProperty('keys', 0);
+      expect(currency).toHaveProperty('metal', 44.16);
+    });
   });
 
   describe('fromKeys', () => {
@@ -120,6 +127,15 @@ describe('Currency', () => {
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
       }
+    });
+
+    it('Has weapon value', () => {
+      const currency = new Currency({
+        keys: 0,
+        metal: 32.72,
+      });
+
+      expect(currency.toScrap()).toEqual(294.5);
     });
   });
 
@@ -233,6 +249,18 @@ describe('Currency', () => {
       expect(currency).toHaveProperty('keys', 53);
       expect(currency).toHaveProperty('metal', 72.66);
     });
+
+    it('Adds with weapon value', () => {
+      const currency = new Currency({
+        keys: 53,
+        metal: 32.11,
+      });
+
+      currency.addScrap(365.5, 60);
+
+      expect(currency).toHaveProperty('keys', 54);
+      expect(currency).toHaveProperty('metal', 12.72);
+    });
   });
 
   describe('addMetal', () => {
@@ -258,6 +286,18 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 53);
       expect(currency).toHaveProperty('metal', 72.66);
+    });
+
+    it('Adds with weapon value', () => {
+      const currency = new Currency({
+        keys: 53,
+        metal: 32.11,
+      });
+
+      currency.addMetal(40.61);
+
+      expect(currency).toHaveProperty('keys', 53);
+      expect(currency).toHaveProperty('metal', 72.72);
     });
   });
 
@@ -320,6 +360,21 @@ describe('Currency', () => {
       expect(currency).toHaveProperty('keys', 56);
       expect(currency).toHaveProperty('metal', 62.66);
     });
+
+    it('Adds with weapon value', () => {
+      const currency = new Currency({
+        keys: 53,
+        metal: 32.11,
+      });
+
+      currency.addCurrency({
+        keys: 3,
+        metal: 30.61,
+      });
+
+      expect(currency).toHaveProperty('keys', 56);
+      expect(currency).toHaveProperty('metal', 62.72);
+    });
   });
 
   describe('removeScrap', () => {
@@ -378,6 +433,18 @@ describe('Currency', () => {
 
       expect(err).toBeInstanceOf(Error);
     });
+    
+    it('Removes with weapon value', () => {
+      const currency = new Currency({
+        keys: 53,
+        metal: 32.11,
+      });
+
+      currency.removeScrap(288.5);
+
+      expect(currency).toHaveProperty('keys', 53);
+      expect(currency).toHaveProperty('metal', 0.05);
+    });
   });
 
   describe('removeMetal', () => {
@@ -403,6 +470,18 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 53);
       expect(currency).toHaveProperty('metal', 0.11);
+    });
+
+    it('Removes with weapon value', () => {
+      const currency = new Currency({
+        keys: 53,
+        metal: 32.11,
+      });
+
+      currency.removeMetal(32.05);
+
+      expect(currency).toHaveProperty('keys', 53);
+      expect(currency).toHaveProperty('metal', 0.05);
     });
   });
 
@@ -483,6 +562,21 @@ describe('Currency', () => {
       }
 
       expect(err).toBeInstanceOf(Error);
+    });
+
+    it('Removes with weapon value', () => {
+      const currency = new Currency({
+        keys: 53,
+        metal: 32.11,
+      });
+
+      currency.removeCurrency({
+        keys: 2,
+        metal: 31.05,
+      });
+
+      expect(currency).toHaveProperty('keys', 51);
+      expect(currency).toHaveProperty('metal', 1.05);
     });
   });
 

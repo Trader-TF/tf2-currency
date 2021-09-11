@@ -19,17 +19,27 @@ export function round(n: number, d: number = 2) {
 export function toScrap(value: number) {
   const metal = Math.floor(value);
   const scrapInMetal = round(value - metal);
-  return metal * 9 + (scrapInMetal * 100) / 11;
+  const scrap = (metal * 9 + (scrapInMetal * 100) / 11);
+  return Math.round(scrap * 2) / 2;
 }
 
 export function toRefined(value: number) {
   const metal = Math.floor(value / 9);
-  const scrap = ((value - metal * 9) * 11) / 100;
+  const remainingMetal = value - metal * 9;
+  const rounding = remainingMetal < 5 ? Math.floor : Math.ceil;
+  const scrap = rounding(remainingMetal * 11) / 100;
   return metal + scrap;
 }
 
 export function fixMetal(metal: number): number {
   return toRefined(toScrap(metal));
+}
+
+export function fixCurrency(currency: Partial<ICurrency>) {
+  return {
+    keys: currency.keys || 0,
+    metal: fixMetal(currency.metal || 0),
+  }
 }
 
 export function fromKeysToCurrency(value: number, conversion = 0) {

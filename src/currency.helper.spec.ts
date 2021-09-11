@@ -3,6 +3,7 @@ import {
   toScrap,
   toRefined,
   fixMetal,
+  fixCurrency,
   fromKeysToCurrency,
   isEqual,
   isBigger,
@@ -42,6 +43,14 @@ describe('CurrencyHelper', () => {
     it('Converts refined to scrap #5', () => {
       expect(toScrap(0.77)).toEqual(7);
     });
+
+    it('Converts weapon value #1', () => {
+      expect(toScrap(0.16)).toEqual(1.5);
+    });
+
+    it('Converts weapon value #2', () => {
+      expect(toScrap(0.61)).toEqual(5.5);
+    });
   });
 
   describe('toRefined', () => {
@@ -64,6 +73,14 @@ describe('CurrencyHelper', () => {
     it('Converts scrap to refined #5', () => {
       expect(toRefined(7)).toEqual(0.77);
     });
+
+    it('Converts weapon value #1', () => {
+      expect(toRefined(5.5)).toEqual(0.61);
+    });
+
+    it('Converts weapon value #2', () => {
+      expect(toRefined(1.5)).toEqual(0.16);
+    });
   });
 
   describe('fixMetal', () => {
@@ -78,7 +95,35 @@ describe('CurrencyHelper', () => {
     it('Transfers .99 to 1', () => {
       expect(fixMetal(1.99)).toEqual(2);
     });
+
+    it('Rounds weapon values up', () => {
+      expect(fixMetal(0.6)).toEqual(0.61);
+    });
+
+    it('Rounds weapon values down', () => {
+      expect(fixMetal(0.17)).toEqual(0.16);
+    });
   });
+
+  describe('fixCurrency', () => {
+    describe('Fixes currency metal input', () => {
+      expect(fixCurrency({
+        metal: 0.17
+      })).toEqual({
+        keys: 0,
+        metal: 0.16,
+      })
+    });
+
+    describe('Fixes keys input', () => {
+      expect(fixCurrency({
+        keys: 15
+      })).toEqual({
+        keys: 15,
+        metal: 0,
+      })
+    });
+  })
 
   describe('fromKeysToCurrency', () => {
     it('Converts with conversion', () => {
