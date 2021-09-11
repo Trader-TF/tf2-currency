@@ -202,11 +202,11 @@ describe('Currency', () => {
     });
 
     it('0 keys, 0 metal', () => {
-        expect(
-          new Currency({
-            keys: 0,
-            metal: 0,
-          }).toString(),
+      expect(
+        new Currency({
+          keys: 0,
+          metal: 0,
+        }).toString(),
       ).toEqual('0 keys, 0 metal');
     });
   });
@@ -433,7 +433,7 @@ describe('Currency', () => {
 
       expect(err).toBeInstanceOf(Error);
     });
-    
+
     it('Removes with weapon value', () => {
       const currency = new Currency({
         keys: 53,

@@ -109,23 +109,27 @@ describe('CurrencyHelper', () => {
 
   describe('fixCurrency', () => {
     it('Fixes currency metal input', () => {
-      expect(fixCurrency({
-        metal: 0.17
-      })).toEqual({
+      expect(
+        fixCurrency({
+          metal: 0.17,
+        }),
+      ).toEqual({
         keys: 0,
         metal: 0.16,
-      })
+      });
     });
 
     it('Fixes keys input', () => {
-      expect(fixCurrency({
-        keys: 15
-      })).toEqual({
+      expect(
+        fixCurrency({
+          keys: 15,
+        }),
+      ).toEqual({
         keys: 15,
         metal: 0,
-      })
+      });
     });
-  })
+  });
 
   describe('fromKeysToCurrency', () => {
     it('Converts with conversion', () => {
@@ -277,10 +281,12 @@ describe('CurrencyHelper', () => {
 
   describe('c', () => {
     it('Creates Currency object', () => {
-      expect(c({ keys: 12, metal: 12 })).toEqual(new Currency({
-        keys: 12,
-        metal: 12
-      }))
+      expect(c({ keys: 12, metal: 12 })).toEqual(
+        new Currency({
+          keys: 12,
+          metal: 12,
+        }),
+      );
     });
-  })
+  });
 });

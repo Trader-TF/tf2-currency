@@ -20,7 +20,7 @@ export function round(n: number, d: number = 2) {
 export function toScrap(value: number) {
   const metal = Math.floor(value);
   const scrapInMetal = round(value - metal);
-  const scrap = (metal * 9 + (scrapInMetal * 100) / 11);
+  const scrap = metal * 9 + (scrapInMetal * 100) / 11;
   return Math.round(scrap * 2) / 2;
 }
 
@@ -40,7 +40,7 @@ export function fixCurrency(currency: Partial<ICurrency>) {
   return {
     keys: currency.keys || 0,
     metal: fixMetal(currency.metal || 0),
-  }
+  };
 }
 
 export function fromKeysToCurrency(value: number, conversion = 0) {
