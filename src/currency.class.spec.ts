@@ -182,6 +182,15 @@ describe('Currency', () => {
         }).toString(),
       ).toEqual('53.22 metal');
     });
+
+    it('0 keys, 0 metal', () => {
+        expect(
+          new Currency({
+            keys: 0,
+            metal: 0,
+          }).toString(),
+      ).toEqual('0 keys, 0 metal');
+    });
   });
 
   describe('toJSON', () => {

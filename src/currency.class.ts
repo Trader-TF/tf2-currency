@@ -73,6 +73,10 @@ export class Currency implements ICurrency {
   }
 
   toString() {
+    if (!this.keys && !this.metal) {
+      return '0 keys, 0 metal';
+    }
+
     let currency = '';
 
     if (this.keys) {
