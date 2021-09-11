@@ -20,29 +20,31 @@ describe('Currency', () => {
     });
 
     it('Keys are negative', () => {
+      let err;
       try {
-        const currency = new Currency({
+        new Currency({
           keys: -12,
           metal: 1.11,
         });
-
-        expect(currency).not.toBeDefined();
       } catch (e) {
-        expect(e).toBeInstanceOf(Error);
+        err = e;
       }
+
+      expect(err).toBeInstanceOf(Error);
     });
 
     it('Metal is negative', () => {
+      let err;
       try {
-        const currency = new Currency({
+        new Currency({
           keys: 12,
           metal: -1.11,
         });
-
-        expect(currency).not.toBeDefined();
       } catch (e) {
-        expect(e).toBeInstanceOf(Error);
+        err = e;
       }
+
+      expect(err).toBeInstanceOf(Error);
     });
   });
 

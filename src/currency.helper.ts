@@ -28,6 +28,10 @@ export function toRefined(value: number) {
   return metal + scrap;
 }
 
+export function fixMetal(metal: number): number {
+  return toRefined(toScrap(metal));
+}
+
 export function fromKeysToCurrency(value: number, conversion = 0) {
   const keys = Math.floor(value);
   const metalInKeys = round(value - keys);

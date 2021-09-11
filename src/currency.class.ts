@@ -2,6 +2,7 @@ import {
   round,
   toScrap,
   toRefined,
+  fixMetal,
   fromKeysToCurrency,
   isEqual,
   isBigger,
@@ -16,16 +17,16 @@ export class Currency implements ICurrency {
   public keys: number;
   public metal: number;
 
-  constructor(currency: ICurrency) {
-    if (currency.keys < 0) {
+  constructor(currency: Partial<ICurrency>) {
+    this.keys = currency.keys || 0;
+    if (this.keys < 0) {
       throw new CurrencyError('Supplied key value is negative');
     }
-    this.keys = currency.keys;
 
-    if (currency.metal < 0) {
+    this.metal = fixMetal(currency.metal || 0);
+    if (this.metal < 0) {
       throw new CurrencyError('Supplied metal value is negative');
     }
-    this.metal = currency.metal;
   }
 
   static fromScrap(scrap: number, conversion: number = 0) {
