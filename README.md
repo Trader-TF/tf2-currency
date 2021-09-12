@@ -4,7 +4,7 @@ Set of tools that manage operations with tf2 currency. Inspired by [tf2-currenci
 ## Advantages over tf2-currencies
 - Fully typed, written in typescript
 - Throughly tested, over 100 tests
-- More convinience methods for comparing/operating with currency
+- More convenience methods for comparing/operating with currency
 
 ## Installation
 `npm install tf2-currency` or via yarn `yarn add tf2-currency`
@@ -39,12 +39,12 @@ Creates a Currency class from key value
 
 #### Currency.prototype.toScrap(conversion?: number): number
 Converts currency to scrap
-- `conversion` to covert keys to scrap
+- `conversion` to convert keys to scrap
     - Required if keys are present
 
 #### Currency.prototype.toKeys(conversion?: number): number
-Converts currency to scrap
-- `conversion` to covert metal to keys
+Converts currency to keys
+- `conversion` to convert metal to keys
     - Required if metal is present
 
 #### Currency.prototype.toString(): string
