@@ -148,6 +148,14 @@ describe('CurrencyHelper', () => {
     it('Negative converts weapon value #2', () => {
       expect(toRefined(-1.5)).toEqual(-0.16);
     });
+
+    it('Test 1.66', () => {
+      expect(toRefined(15)).toEqual(1.66);
+    });
+
+    it('Test -1.66', () => {
+      expect(toRefined(-15)).toEqual(-1.66);
+    });
   });
 
   describe('fixMetal', () => {

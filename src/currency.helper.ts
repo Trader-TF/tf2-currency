@@ -34,7 +34,7 @@ export function toRefined(value: number) {
     : Math.ceil;
 
   const scrap = rounding(remainingMetal * 11) / 100;
-  return metal + scrap;
+  return round(metal + scrap);
 }
 
 export function fixMetal(metal: number): number {
