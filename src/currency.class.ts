@@ -18,7 +18,7 @@ export class Currency implements ICurrency {
   public keys: number;
   public metal: number;
 
-  constructor(currency: Partial<ICurrency>) {
+  constructor(currency: Partial<ICurrency> = {}) {
     this.keys = currency.keys || 0;
     this.metal = fixMetal(currency.metal || 0);
   }
