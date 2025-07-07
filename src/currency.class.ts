@@ -2,7 +2,6 @@ import {
   round,
   toScrap,
   toRefined,
-  fixMetal,
   fromKeysToCurrency,
   isEqual,
   isBigger,
@@ -10,29 +9,53 @@ import {
   isBiggerOrEqual,
   isSmallerOrEqual,
   pluralizeKeys,
+  toWeapons,
+  toRefinedFromWeapons,
+  w,
+  fixMetal,
 } from './currency.helper';
 import { CurrencyError } from './currency.error';
-import { ICurrency } from './currency.interface';
+import { ICurrency, IWeaponizedCurrency } from './currency.interface';
 
-export class Currency implements ICurrency {
+export class Currency implements ICurrency, IWeaponizedCurrency {
   public keys: number;
-  public metal: number;
 
-  constructor(currency: Partial<ICurrency> = {}) {
+  public get metal() {
+    return toRefinedFromWeapons(this.metalInWeapons);
+  }
+
+  public metalInWeapons: number;
+
+  constructor(currency: Partial<ICurrency> = {}, metalInWeapons?: number) {
     this.keys = currency.keys || 0;
-    this.metal = fixMetal(currency.metal || 0);
+
+    if (metalInWeapons) {
+      this.metalInWeapons = metalInWeapons;
+    } else {
+      this.metalInWeapons = toWeapons(fixMetal(currency.metal || 0));
+    }
   }
 
   static fromScrap(scrap: number, conversion = 0) {
     const conversionInScrap = toScrap(conversion);
-    const rounding = scrap < 0 ? Math.ceil : Math.floor;
-    const keys = conversionInScrap ? rounding(scrap / conversionInScrap) : 0;
+    const roundMethod = scrap < 0 ? Math.ceil : Math.floor;
+    const keys = conversionInScrap ? roundMethod(scrap / conversionInScrap) : 0;
     const metalInScrap = scrap - keys * conversionInScrap;
     const metal = toRefined(metalInScrap);
     return new Currency({
       keys,
       metal,
     });
+  }
+
+  static fromWeapons(weapons: number, conversion = 0) {
+    const conversionInWeapons = toWeapons(conversion);
+    const roundMethod = weapons < 0 ? Math.ceil : Math.floor;
+    const keys = conversionInWeapons
+      ? roundMethod(weapons / conversionInWeapons)
+      : 0;
+    const metalInWeapons = weapons - keys * conversionInWeapons;
+    return new Currency({ keys }, metalInWeapons);
   }
 
   static fromKeys(value: number, conversion = 0) {
@@ -47,17 +70,20 @@ export class Currency implements ICurrency {
     return this.keys === 0 && this.metal === 0;
   }
 
-  toScrap(conversion = 0) {
+  toWeapons(conversion = 0) {
     if (this.keys && !conversion) {
       throw new CurrencyError(
         'Conversion value is required when keys are present.',
       );
     }
 
-    const conversionInScrap = toScrap(conversion);
-    const metalInScrap = toScrap(this.metal);
-    const keysInScrap = this.keys * conversionInScrap;
-    return keysInScrap + metalInScrap;
+    const conversionInWeapons = toWeapons(conversion);
+    const keysInWeapons = this.keys * conversionInWeapons;
+    return keysInWeapons + this.metalInWeapons;
+  }
+
+  toScrap(conversion = 0) {
+    return this.toWeapons(conversion) / 2;
   }
 
   toKeys(conversion = 0) {
@@ -77,7 +103,7 @@ export class Currency implements ICurrency {
   }
 
   toString() {
-    if (!this.keys && !this.metal) {
+    if (!this.keys && !this.metalInWeapons) {
       return '0 keys, 0 metal';
     }
 
@@ -87,7 +113,7 @@ export class Currency implements ICurrency {
       currency += pluralizeKeys(this.keys);
     }
 
-    if (this.metal) {
+    if (this.metalInWeapons) {
       if (currency) {
         currency += ', ';
       }
@@ -105,17 +131,32 @@ export class Currency implements ICurrency {
     };
   }
 
-  addScrap(value: number, conversion = 0) {
-    const currentScrapValue = this.toScrap(conversion);
+  /**
+   * Returns a JSON representation of the currency with weapons instead of metal.
+   * @returns JSON representation with keys and weapons.
+   */
+  toJSON2(): IWeaponizedCurrency {
+    return {
+      keys: this.keys,
+      metalInWeapons: this.metalInWeapons,
+    };
+  }
+
+  addWeapons(value: number, conversion = 0) {
+    const currentScrapValue = this.toWeapons(conversion);
     const total = currentScrapValue + value;
-    const currency = Currency.fromScrap(total, conversion);
+    const currency = Currency.fromWeapons(total, conversion);
     this.keys = currency.keys;
-    this.metal = currency.metal;
+    this.metalInWeapons = currency.metalInWeapons;
     return this;
   }
 
+  addScrap(value: number, conversion = 0) {
+    return this.addWeapons(value * 2, conversion);
+  }
+
   addMetal(value: number, conversion?: number) {
-    return this.addScrap(toScrap(value), conversion);
+    return this.addWeapons(toWeapons(value), conversion);
   }
 
   addKeys(value: number, conversion: number) {
@@ -123,10 +164,14 @@ export class Currency implements ICurrency {
   }
 
   addCurrency(currency: ICurrency, conversion?: number) {
-    return this.addScrap(
-      new Currency(currency).toScrap(conversion),
+    return this.addWeapons(
+      new Currency(currency).toWeapons(conversion),
       conversion,
     );
+  }
+
+  removeWeapons(value: number, conversion = 0) {
+    return this.addWeapons(-value, conversion);
   }
 
   removeScrap(value: number, conversion?: number) {
@@ -169,5 +214,41 @@ export class Currency implements ICurrency {
 
   isSmallerOrEqual(currency: ICurrency) {
     return isSmallerOrEqual(this, currency);
+  }
+
+  compareTo(value: ICurrency): 1 | 0 | -1 {
+    if (this.isBigger(value)) {
+      return 1;
+    }
+
+    if (this.isSmaller(value)) {
+      return -1;
+    }
+
+    return 0;
+  }
+
+  wIsEqual(currency: IWeaponizedCurrency) {
+    return w.isEqual(this, currency);
+  }
+
+  wIsBigger(currency: IWeaponizedCurrency) {
+    return w.isBigger(this, currency);
+  }
+
+  wIsSmaller(currency: IWeaponizedCurrency) {
+    return w.isSmaller(this, currency);
+  }
+
+  wIsBiggerOrEqual(currency: IWeaponizedCurrency) {
+    return w.isBiggerOrEqual(this, currency);
+  }
+
+  wIsSmallerOrEqual(currency: IWeaponizedCurrency) {
+    return w.isSmallerOrEqual(this, currency);
+  }
+
+  wCompareTo(value: IWeaponizedCurrency): 1 | 0 | -1 {
+    return w.compareTo(this, value);
   }
 }
