@@ -16,9 +16,9 @@
     "type": "git",
     "url": "git+https://github.com/Trader-TF/tf2-currency.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["tf2", "currency", "scrap", "refined metal", "keys"],
+  "author": "glencoco",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Trader-TF/tf2-currency/issues"
   },
