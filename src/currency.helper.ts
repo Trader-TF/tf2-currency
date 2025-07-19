@@ -220,3 +220,15 @@ export const w = {
     return 0;
   },
 };
+
+export function isWeaponizedCurrency(
+  currency: Partial<ICurrency | IWeaponizedCurrency>,
+): currency is Partial<IWeaponizedCurrency> {
+  return Object.prototype.hasOwnProperty.call(currency, 'metalInWeapons');
+}
+
+export function isClassicCurrency(
+  currency: Partial<ICurrency | IWeaponizedCurrency>,
+): currency is Partial<IWeaponizedCurrency> {
+  return Object.prototype.hasOwnProperty.call(currency, 'metal');
+}

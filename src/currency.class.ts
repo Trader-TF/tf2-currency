@@ -13,6 +13,8 @@ import {
   toRefinedFromWeapons,
   w,
   fixMetal,
+  isWeaponizedCurrency,
+  isClassicCurrency,
 } from './currency.helper';
 import { CurrencyError } from './currency.error';
 import { ICurrency, IWeaponizedCurrency } from './currency.interface';
@@ -26,13 +28,15 @@ export class Currency implements ICurrency, IWeaponizedCurrency {
 
   public metalInWeapons: number;
 
-  constructor(currency: Partial<ICurrency> = {}, metalInWeapons?: number) {
+  constructor(currency: Partial<ICurrency | IWeaponizedCurrency> = {}) {
     this.keys = currency.keys || 0;
 
-    if (metalInWeapons) {
-      this.metalInWeapons = metalInWeapons;
-    } else {
+    if (isWeaponizedCurrency(currency)) {
+      this.metalInWeapons = currency.metalInWeapons || 0;
+    } else if (isClassicCurrency(currency)) {
       this.metalInWeapons = toWeapons(fixMetal(currency.metal || 0));
+    } else {
+      this.metalInWeapons = 0;
     }
   }
 
@@ -55,7 +59,7 @@ export class Currency implements ICurrency, IWeaponizedCurrency {
       ? roundMethod(weapons / conversionInWeapons)
       : 0;
     const metalInWeapons = weapons - keys * conversionInWeapons;
-    return new Currency({ keys }, metalInWeapons);
+    return new Currency({ keys, metalInWeapons });
   }
 
   static fromKeys(value: number, conversion = 0) {
