@@ -74,7 +74,10 @@ Converts currency to keys
 Builds a currency string readable for humans
 
 #### Currency.prototype.toJSON(): ICurrency
-Returns plain currency object for json serialization
+Returns plain currency object, with keys & metal, for json serialization
+
+#### Currency.prototype.toWeaponizedJSON(): ICurrency
+Returns plain currency object, with keys & weapons, for json serialization
 
 #### Currency.prototype.addWeapons(weapons: number, conversion?: number): Currency
 Adds weapon value to the currency
@@ -189,10 +192,11 @@ Compares current currency object with supplied weaponized currency
   - `1` if current is bigger
   - `-1` if current is smaller
 
-### c(currency: Partial<ICurrency>): Currency
+### Helpers
+#### c(currency: Partial<ICurrency>): Currency
 Creates `Currency` object
 - `currency` from which we are creating the object
 
-### fixCurrency(currency: Partial<ICurrency>): ICurrency
+#### fixCurrency(currency: Partial<ICurrency>): ICurrency
 Fixes partial `currency` object
 - `currency` we are fixing

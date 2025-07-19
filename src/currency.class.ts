@@ -135,7 +135,7 @@ export class Currency implements ICurrency, IWeaponizedCurrency {
    * Returns a JSON representation of the currency with weapons instead of metal.
    * @returns JSON representation with keys and weapons.
    */
-  toJSON2(): IWeaponizedCurrency {
+  toWeaponizedJSON(): IWeaponizedCurrency {
     return {
       keys: this.keys,
       metalInWeapons: this.metalInWeapons,
