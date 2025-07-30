@@ -5,6 +5,8 @@ import {
   isSmaller,
   isBiggerOrEqual,
   isSmallerOrEqual,
+  w,
+  compareTo,
 } from './currency.helper';
 
 describe('Currency', () => {
@@ -16,6 +18,7 @@ describe('Currency', () => {
       });
 
       expect(currency).toHaveProperty('keys', 12);
+      expect(currency).toHaveProperty('metalInWeapons', 430);
       expect(currency).toHaveProperty('metal', 23.88);
     });
 
@@ -27,6 +30,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', -12);
       expect(currency).toHaveProperty('metal', 23.88);
+      expect(currency).toHaveProperty('metalInWeapons', 430);
     });
 
     it('Metal is negative', () => {
@@ -37,6 +41,31 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 12);
       expect(currency).toHaveProperty('metal', -23.88);
+      expect(currency).toHaveProperty('metalInWeapons', -430);
+    });
+
+    it('No metal present', () => {
+      const currency = new Currency({ keys: 1 });
+
+      expect(currency).toHaveProperty('keys', 1);
+      expect(currency).toHaveProperty('metalInWeapons', 0);
+    });
+  });
+
+  describe('fromWeapons', () => {
+    it('With conversion', () => {
+      const currency = Currency.fromWeapons(1005, 10);
+
+      expect(currency).toHaveProperty('keys', 5);
+      expect(currency).toHaveProperty('metalInWeapons', 105);
+    });
+
+    it('With conversion', () => {
+      const currency = Currency.fromWeapons(1005);
+
+      expect(currency).toHaveProperty('keys', 0);
+      expect(currency).toHaveProperty('metalInWeapons', 1005);
+      expect(currency).toHaveProperty('metal', 55.83);
     });
   });
 
@@ -46,6 +75,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 1);
       expect(currency).toHaveProperty('metal', 49.11);
+      expect(currency).toHaveProperty('metalInWeapons', 884);
     });
 
     it('Does not require conversion', () => {
@@ -53,6 +83,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 44.11);
+      expect(currency).toHaveProperty('metalInWeapons', 794);
     });
 
     it('Has weapon value', () => {
@@ -60,6 +91,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 44.16);
+      expect(currency).toHaveProperty('metalInWeapons', 795);
     });
 
     it('Negative with conversion and weapon value', () => {
@@ -67,6 +99,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', -1);
       expect(currency).toHaveProperty('metal', -49.16);
+      expect(currency).toHaveProperty('metalInWeapons', -885);
     });
   });
 
@@ -76,6 +109,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 3);
       expect(currency).toHaveProperty('metal', 12.44);
+      expect(currency).toHaveProperty('metalInWeapons', 224);
     });
 
     it('Does not require conversion', () => {
@@ -83,6 +117,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 3);
       expect(currency).toHaveProperty('metal', 0);
+      expect(currency).toHaveProperty('metalInWeapons', 0);
     });
 
     it('Throws an exception because of missing conversion', () => {
@@ -99,6 +134,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', -3);
       expect(currency).toHaveProperty('metal', -12.44);
+      expect(currency).toHaveProperty('metalInWeapons', -224);
     });
   });
 
@@ -233,6 +269,42 @@ describe('Currency', () => {
         }).toString(),
       ).toEqual('0 keys, 0 metal');
     });
+
+    it('Has weapon value #1', () => {
+      expect(
+        new Currency({
+          keys: 0,
+          metalInWeapons: 101,
+        }).toString(),
+      ).toEqual('5.61 metal');
+    });
+
+    it('Has weapon value #2', () => {
+      expect(
+        new Currency({
+          keys: 0,
+          metalInWeapons: 1,
+        }).toString(),
+      ).toEqual('0.05 metal');
+    });
+
+    it('Has weapon value #3', () => {
+      expect(
+        new Currency({
+          keys: 0,
+          metalInWeapons: 261,
+        }).toString(),
+      ).toEqual('14.49 metal');
+    });
+
+    it('Has weapon value #3', () => {
+      expect(
+        new Currency({
+          keys: 0,
+          metalInWeapons: 265,
+        }).toString(),
+      ).toEqual('14.72 metal');
+    });
   });
 
   describe('toJSON', () => {
@@ -249,6 +321,20 @@ describe('Currency', () => {
     });
   });
 
+  describe('toWeaponizedJSON', () => {
+    it('Gives correct form', () => {
+      const currency = new Currency({
+        keys: 53,
+        metalInWeapons: 10,
+      });
+
+      expect(currency.toWeaponizedJSON()).toEqual({
+        keys: 53,
+        metalInWeapons: 10,
+      });
+    });
+  });
+
   describe('addScrap', () => {
     it('Adds with conversion', () => {
       const currency = new Currency({
@@ -260,6 +346,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 54);
       expect(currency).toHaveProperty('metal', 12.66);
+      expect(currency).toHaveProperty('metalInWeapons', 228);
     });
 
     it('Adds without conversion', () => {
@@ -272,6 +359,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 72.66);
+      expect(currency).toHaveProperty('metalInWeapons', 1308);
     });
 
     it('Adds with weapon value', () => {
@@ -284,6 +372,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 54);
       expect(currency).toHaveProperty('metal', 12.72);
+      expect(currency).toHaveProperty('metalInWeapons', 229);
     });
 
     it('Adds negative value', () => {
@@ -296,6 +385,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', -54);
       expect(currency).toHaveProperty('metal', -12.72);
+      expect(currency).toHaveProperty('metalInWeapons', -229);
     });
   });
 
@@ -310,6 +400,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 54);
       expect(currency).toHaveProperty('metal', 12.66);
+      expect(currency).toHaveProperty('metalInWeapons', 228);
     });
 
     it('Adds without conversion', () => {
@@ -322,6 +413,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 72.66);
+      expect(currency).toHaveProperty('metalInWeapons', 1308);
     });
 
     it('Adds with weapon value', () => {
@@ -334,6 +426,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 72.72);
+      expect(currency).toHaveProperty('metalInWeapons', 1309);
     });
 
     it('Adds negative value', () => {
@@ -346,6 +439,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', -72.72);
+      expect(currency).toHaveProperty('metalInWeapons', -1309);
     });
   });
 
@@ -360,6 +454,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 55);
       expect(currency).toHaveProperty('metal', 8.11);
+      expect(currency).toHaveProperty('metalInWeapons', 146);
     });
 
     it('Adds negative value', () => {
@@ -372,6 +467,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', -55);
       expect(currency).toHaveProperty('metal', -8.11);
+      expect(currency).toHaveProperty('metalInWeapons', -146);
     });
   });
 
@@ -392,6 +488,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 57);
       expect(currency).toHaveProperty('metal', 2.66);
+      expect(currency).toHaveProperty('metalInWeapons', 48);
     });
 
     it('Adds without conversion', () => {
@@ -407,6 +504,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 62.66);
+      expect(currency).toHaveProperty('metalInWeapons', 1128);
     });
 
     it('Adds with weapon value', () => {
@@ -422,6 +520,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 62.72);
+      expect(currency).toHaveProperty('metalInWeapons', 1129);
     });
 
     it('Adds negative currency', () => {
@@ -437,6 +536,33 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', -62.72);
+      expect(currency).toHaveProperty('metalInWeapons', -1129);
+    });
+  });
+
+  describe('removeWeapons', () => {
+    it('Removes without conversion', () => {
+      const currency = new Currency({
+        keys: 0,
+        metalInWeapons: 10,
+      });
+
+      expect(currency.removeWeapons(5).toWeaponizedJSON()).toEqual({
+        keys: 0,
+        metalInWeapons: 5,
+      });
+    });
+
+    it('Removes with conversion', () => {
+      const currency = new Currency({
+        keys: 12,
+        metalInWeapons: 10,
+      });
+
+      expect(currency.removeWeapons(5, 50).toWeaponizedJSON()).toEqual({
+        keys: 12,
+        metalInWeapons: 5,
+      });
     });
   });
 
@@ -451,6 +577,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 52);
       expect(currency).toHaveProperty('metal', 51.55);
+      expect(currency).toHaveProperty('metalInWeapons', 928);
     });
 
     it('Removes without conversion', () => {
@@ -463,6 +590,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 0.11);
+      expect(currency).toHaveProperty('metalInWeapons', 2);
     });
 
     it('Throws for no conversion', () => {
@@ -491,6 +619,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 52);
       expect(currency).toHaveProperty('metal', 51.49);
+      expect(currency).toHaveProperty('metalInWeapons', 927);
     });
 
     it('Removes negative value', () => {
@@ -503,6 +632,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', -52);
       expect(currency).toHaveProperty('metal', -51.55);
+      expect(currency).toHaveProperty('metalInWeapons', -928);
     });
   });
 
@@ -517,6 +647,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 52);
       expect(currency).toHaveProperty('metal', 51.55);
+      expect(currency).toHaveProperty('metalInWeapons', 928);
     });
 
     it('Removes without conversion', () => {
@@ -529,6 +660,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 0.11);
+      expect(currency).toHaveProperty('metalInWeapons', 2);
     });
 
     it('Removes with weapon value', () => {
@@ -541,6 +673,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 0.05);
+      expect(currency).toHaveProperty('metalInWeapons', 1);
     });
   });
 
@@ -555,6 +688,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 49);
       expect(currency).toHaveProperty('metal', 56.11);
+      expect(currency).toHaveProperty('metalInWeapons', 1010);
     });
   });
 
@@ -575,6 +709,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 50);
       expect(currency).toHaveProperty('metal', 56.11);
+      expect(currency).toHaveProperty('metalInWeapons', 1010);
     });
 
     it('Removes without conversion', () => {
@@ -590,6 +725,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 1.11);
+      expect(currency).toHaveProperty('metalInWeapons', 20);
     });
 
     it('Throws for no keys', () => {
@@ -624,6 +760,7 @@ describe('Currency', () => {
 
       expect(currency).toHaveProperty('keys', 0);
       expect(currency).toHaveProperty('metal', 1.05);
+      expect(currency).toHaveProperty('metalInWeapons', 19);
     });
   });
 
@@ -771,6 +908,239 @@ describe('Currency', () => {
           metal: 0,
         }).isEmpty(),
       ).toEqual(false);
+    });
+  });
+
+  describe('w', () => {
+    describe('isEqual', () => {
+      it('Returns same result as isEqual helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metalInWeapons: 32,
+        });
+
+        expect(
+          currency.wIsEqual({
+            keys: 53,
+            metalInWeapons: 32,
+          }),
+        ).toEqual(
+          w.isEqual(currency, {
+            keys: 53,
+            metalInWeapons: 32,
+          }),
+        );
+      });
+    });
+
+    describe('isBigger', () => {
+      it('Returns same result as isBigger helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metal: 32.11,
+        });
+
+        expect(
+          currency.isBigger({
+            keys: 53,
+            metal: 32.11,
+          }),
+        ).toEqual(
+          isBigger(currency, {
+            keys: 53,
+            metal: 32.11,
+          }),
+        );
+      });
+    });
+
+    describe('isSmaller', () => {
+      it('Returns same result as isSmaller helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metal: 32.11,
+        });
+
+        expect(
+          currency.isSmaller({
+            keys: 53,
+            metal: 32.11,
+          }),
+        ).toEqual(
+          isSmaller(currency, {
+            keys: 53,
+            metal: 32.11,
+          }),
+        );
+      });
+    });
+
+    describe('isBiggerOrEqual', () => {
+      it('Returns same result as isBiggerOrEqual helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metal: 32.11,
+        });
+
+        expect(
+          currency.isBiggerOrEqual({
+            keys: 53,
+            metal: 32.11,
+          }),
+        ).toEqual(
+          isBiggerOrEqual(currency, {
+            keys: 53,
+            metal: 32.11,
+          }),
+        );
+      });
+    });
+
+    describe('isSmallerOrEqual', () => {
+      it('Returns same result as isSmallerOrEqual helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metal: 32.11,
+        });
+
+        expect(
+          currency.isSmallerOrEqual({
+            keys: 53,
+            metal: 32.11,
+          }),
+        ).toEqual(
+          isSmallerOrEqual(currency, {
+            keys: 53,
+            metal: 32.11,
+          }),
+        );
+      });
+    });
+
+    describe('compareTo', () => {
+      it('Returns same result as compareTo helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metal: 32.11,
+        });
+
+        expect(
+          currency.compareTo({
+            keys: 53,
+            metal: 32.11,
+          }),
+        ).toEqual(
+          compareTo(currency, {
+            keys: 53,
+            metal: 32.11,
+          }),
+        );
+      });
+    });
+
+    describe('wIsBigger', () => {
+      it('Returns same result as w.isBigger helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metalInWeapons: 11,
+        });
+
+        expect(
+          currency.wIsBigger({
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        ).toEqual(
+          w.isBigger(currency, {
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        );
+      });
+    });
+
+    describe('wIsSmaller', () => {
+      it('Returns same result as w.isSmaller helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metalInWeapons: 11,
+        });
+
+        expect(
+          currency.wIsSmaller({
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        ).toEqual(
+          w.isSmaller(currency, {
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        );
+      });
+    });
+
+    describe('wIsBiggerOrEqual', () => {
+      it('Returns same result as w.isBiggerOrEqual helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metalInWeapons: 11,
+        });
+
+        expect(
+          currency.wIsBiggerOrEqual({
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        ).toEqual(
+          w.isBiggerOrEqual(currency, {
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        );
+      });
+    });
+
+    describe('wIsSmallerOrEqual', () => {
+      it('Returns same result as w.isSmallerOrEqual helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metalInWeapons: 11,
+        });
+
+        expect(
+          currency.wIsSmallerOrEqual({
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        ).toEqual(
+          w.isSmallerOrEqual(currency, {
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        );
+      });
+    });
+
+    describe('wCompareTo', () => {
+      it('Returns same result as w.compareTo helper', () => {
+        const currency = new Currency({
+          keys: 53,
+          metalInWeapons: 11,
+        });
+
+        expect(
+          currency.wCompareTo({
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        ).toEqual(
+          w.compareTo(currency, {
+            keys: 53,
+            metalInWeapons: 12,
+          }),
+        );
+      });
     });
   });
 });

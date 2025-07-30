@@ -1,6 +1,6 @@
 import { Currency } from './currency.class';
 import { CurrencyError } from './currency.error';
-import { ICurrency } from './currency.interface';
+import { ICurrency, IWeaponizedCurrency } from './currency.interface';
 
 /**
  * Rounds a number
@@ -14,8 +14,23 @@ export function round(n: number, d = 2) {
 }
 
 /**
+ * Convert refined to weapon value.
+ * Works the same as toScrap, but is result is multiplied by 2.
+ *
+ * @param value in scrap
+ * @returns value in weapons
+ */
+export function toWeapons(value: number) {
+  const metal = Math.floor(value);
+  const scrapInMetal = round(value - metal);
+  const scrap = metal * 9 + (scrapInMetal * 100) / 11;
+  return Math.round(scrap * 2);
+}
+
+/**
  * Converts refined to scrap.
  * @param value in refined
+ * @return value in scrap
  */
 export function toScrap(value: number) {
   const metal = Math.floor(value);
@@ -34,6 +49,26 @@ export function toRefined(value: number) {
     : Math.ceil;
 
   const scrap = rounding(remainingMetal * 11) / 100;
+  return round(metal + scrap);
+}
+
+export function toRefinedFromWeapons(value: number) {
+  const isNegative = value < 0;
+  const metal = (isNegative ? -1 : 1) * Math.floor(Math.abs(value) / 18);
+
+  const remainingMetalInScrap = (value - metal * 18) / 2;
+  const roundingCondition = isNegative
+    ? remainingMetalInScrap < -5
+    : remainingMetalInScrap < 5;
+
+  let roundMethod: (n: number) => number;
+  if (roundingCondition) {
+    roundMethod = Math.floor;
+  } else {
+    roundMethod = Math.ceil;
+  }
+
+  const scrap = roundMethod(remainingMetalInScrap * 11) / 100;
   return round(metal + scrap);
 }
 
@@ -108,6 +143,21 @@ export function isSmallerOrEqual(
   );
 }
 
+export function compareTo(
+  currencyA: ICurrency,
+  currencyB: ICurrency,
+): 1 | 0 | -1 {
+  if (isBigger(currencyA, currencyB)) {
+    return 1;
+  }
+
+  if (isSmaller(currencyA, currencyB)) {
+    return -1;
+  }
+
+  return 0;
+}
+
 export function c(currency: Partial<ICurrency>): Currency {
   return new Currency(currency);
 }
@@ -120,4 +170,80 @@ export function pluralizeKeys(value: number) {
   return `${value} ${
     value < 0 ? (value < -1 ? 'keys' : 'key') : value > 1 ? 'keys' : 'key'
   }`;
+}
+
+export const w = {
+  isEqual(
+    currencyA: IWeaponizedCurrency,
+    currencyB: IWeaponizedCurrency,
+  ): boolean {
+    return (
+      currencyA.keys === currencyB.keys &&
+      currencyA.metalInWeapons === currencyB.metalInWeapons
+    );
+  },
+  isBigger(
+    currencyA: IWeaponizedCurrency,
+    currencyB: IWeaponizedCurrency,
+  ): boolean {
+    return (
+      currencyA.keys > currencyB.keys ||
+      (currencyA.keys === currencyB.keys &&
+        currencyA.metalInWeapons > currencyB.metalInWeapons)
+    );
+  },
+  isSmaller(
+    currencyA: IWeaponizedCurrency,
+    currencyB: IWeaponizedCurrency,
+  ): boolean {
+    return (
+      currencyA.keys < currencyB.keys ||
+      (currencyA.keys === currencyB.keys &&
+        currencyA.metalInWeapons < currencyB.metalInWeapons)
+    );
+  },
+  isBiggerOrEqual(
+    currencyA: IWeaponizedCurrency,
+    currencyB: IWeaponizedCurrency,
+  ): boolean {
+    return (
+      currencyA.keys > currencyB.keys ||
+      (currencyA.keys === currencyB.keys &&
+        currencyA.metalInWeapons >= currencyB.metalInWeapons)
+    );
+  },
+  isSmallerOrEqual(
+    currencyA: IWeaponizedCurrency,
+    currencyB: IWeaponizedCurrency,
+  ): boolean {
+    return (
+      currencyA.keys < currencyB.keys ||
+      (currencyA.keys === currencyB.keys &&
+        currencyA.metalInWeapons <= currencyB.metalInWeapons)
+    );
+  },
+  compareTo(
+    currencyA: IWeaponizedCurrency,
+    currencyB: IWeaponizedCurrency,
+  ): 1 | 0 | -1 {
+    if (w.isBigger(currencyA, currencyB)) {
+      return 1;
+    }
+    if (w.isSmaller(currencyA, currencyB)) {
+      return -1;
+    }
+    return 0;
+  },
+};
+
+export function isWeaponizedCurrency(
+  currency: Partial<ICurrency | IWeaponizedCurrency>,
+): currency is Partial<IWeaponizedCurrency> {
+  return Object.prototype.hasOwnProperty.call(currency, 'metalInWeapons');
+}
+
+export function isClassicCurrency(
+  currency: Partial<ICurrency | IWeaponizedCurrency>,
+): currency is Partial<IWeaponizedCurrency> {
+  return Object.prototype.hasOwnProperty.call(currency, 'metal');
 }

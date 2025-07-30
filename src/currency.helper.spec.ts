@@ -11,6 +11,9 @@ import {
   isBiggerOrEqual,
   isSmallerOrEqual,
   c,
+  w,
+  compareTo,
+  toWeapons,
 } from './currency.helper';
 import { Currency } from './currency.class';
 import { pluralizeKeys } from '.';
@@ -89,6 +92,28 @@ describe('CurrencyHelper', () => {
 
     it('Negative converts weapon value #2', () => {
       expect(toScrap(-0.61)).toEqual(-5.5);
+    });
+  });
+
+  describe('toWeapons', () => {
+    it('Converts int refined to weapons', () => {
+      expect(toWeapons(14)).toEqual(14 * 18);
+    });
+
+    it('Converts refined with scrap to weapons', () => {
+      expect(toWeapons(14.55)).toEqual(14 * 18 + 10);
+    });
+
+    it('Converts refined with weapons to weapons #1', () => {
+      expect(toWeapons(14.72)).toEqual(14 * 18 + 13);
+    });
+
+    it('Converts refined with weapons to weapons #2', () => {
+      expect(toWeapons(14.05)).toEqual(14 * 18 + 1);
+    });
+
+    it('Converts refined with weapons to weapons #3', () => {
+      expect(toWeapons(14.49)).toEqual(14 * 18 + 9);
     });
   });
 
@@ -276,13 +301,13 @@ describe('CurrencyHelper', () => {
 
     it('Is not bigger #1', () => {
       expect(
-        isEqual({ keys: 21, metal: 52.11 }, { keys: 22, metal: 52.11 }),
+        isBigger({ keys: 21, metal: 52.11 }, { keys: 22, metal: 52.11 }),
       ).toEqual(false);
     });
 
     it('Is not bigger #2', () => {
       expect(
-        isEqual({ keys: 22, metal: 52.11 }, { keys: 22, metal: 52 }),
+        isBigger({ keys: 22, metal: 52 }, { keys: 22, metal: 52.11 }),
       ).toEqual(false);
     });
   });
@@ -374,6 +399,26 @@ describe('CurrencyHelper', () => {
     });
   });
 
+  describe('compareTo', () => {
+    it('Is Equal', () => {
+      expect(
+        compareTo({ keys: 12, metal: 20 }, { keys: 12, metal: 20 }),
+      ).toEqual(0);
+    });
+
+    it('Is Smaller', () => {
+      expect(
+        compareTo({ keys: 12, metal: 19 }, { keys: 12, metal: 20 }),
+      ).toEqual(-1);
+    });
+
+    it('Is Equal', () => {
+      expect(
+        compareTo({ keys: 12, metal: 21 }, { keys: 12, metal: 20 }),
+      ).toEqual(1);
+    });
+  });
+
   describe('c', () => {
     it('Creates Currency object', () => {
       expect(c({ keys: 12, metal: 12 })).toEqual(
@@ -404,6 +449,173 @@ describe('CurrencyHelper', () => {
 
     it('Positive plural', () => {
       expect(pluralizeKeys(1)).toEqual('1 key');
+    });
+  });
+
+  describe('weaponized', () => {
+    describe('isEqual', () => {
+      it('Is equal', () => {
+        expect(
+          w.isEqual(
+            { keys: 22, metalInWeapons: 631 },
+            { keys: 22, metalInWeapons: 631 },
+          ),
+        ).toEqual(true);
+      });
+
+      it('Is not equal', () => {
+        expect(
+          w.isEqual(
+            { keys: 22, metalInWeapons: 532 },
+            { keys: 22, metalInWeapons: 123 },
+          ),
+        ).toEqual(false);
+      });
+    });
+
+    describe('isBigger', () => {
+      it('Is bigger', () => {
+        expect(
+          w.isBigger(
+            { keys: 22, metalInWeapons: 532 },
+            { keys: 22, metalInWeapons: 531 },
+          ),
+        ).toEqual(true);
+      });
+
+      it('Is not bigger #1', () => {
+        expect(
+          w.isBigger(
+            { keys: 21, metalInWeapons: 233 },
+            { keys: 22, metalInWeapons: 110 },
+          ),
+        ).toEqual(false);
+      });
+
+      it('Is not bigger #2', () => {
+        expect(
+          w.isBigger(
+            { keys: 22, metalInWeapons: 533 },
+            { keys: 22, metalInWeapons: 533 },
+          ),
+        ).toEqual(false);
+      });
+    });
+
+    describe('isSmaller', () => {
+      it('Is smaller', () => {
+        expect(
+          w.isSmaller(
+            { keys: 22, metalInWeapons: 123 },
+            { keys: 22, metalInWeapons: 289 },
+          ),
+        ).toEqual(true);
+      });
+
+      it('Is not smaller #1', () => {
+        expect(
+          w.isSmaller(
+            { keys: 22, metalInWeapons: 219 },
+            { keys: 22, metalInWeapons: 190 },
+          ),
+        ).toEqual(false);
+      });
+
+      it('Is not smaller #2', () => {
+        expect(
+          w.isSmaller(
+            { keys: 22, metalInWeapons: 123 },
+            { keys: 22, metalInWeapons: 123 },
+          ),
+        ).toEqual(false);
+      });
+    });
+
+    describe('isBiggerOrEqual', () => {
+      it('Is bigger #1', () => {
+        expect(
+          w.isBiggerOrEqual(
+            { keys: 22, metalInWeapons: 125 },
+            { keys: 22, metalInWeapons: 124 },
+          ),
+        ).toEqual(true);
+      });
+
+      it('Is equal', () => {
+        expect(
+          w.isBiggerOrEqual(
+            { keys: 22, metalInWeapons: 100 },
+            { keys: 22, metalInWeapons: 100 },
+          ),
+        ).toEqual(true);
+      });
+
+      it('Is not bigger or equal #1', () => {
+        expect(
+          w.isBiggerOrEqual(
+            { keys: 22, metalInWeapons: 90 },
+            { keys: 22, metalInWeapons: 100 },
+          ),
+        ).toEqual(false);
+      });
+    });
+
+    describe('isSmallerOrEqual', () => {
+      it('Is smaller #1', () => {
+        expect(
+          w.isSmallerOrEqual(
+            { keys: 21, metalInWeapons: 90 },
+            { keys: 22, metalInWeapons: 100 },
+          ),
+        ).toEqual(true);
+      });
+
+      it('Is equal', () => {
+        expect(
+          w.isSmallerOrEqual(
+            { keys: 22, metalInWeapons: 100 },
+            { keys: 22, metalInWeapons: 100 },
+          ),
+        ).toEqual(true);
+      });
+
+      it('Is not smaller or equal #1', () => {
+        expect(
+          w.isSmallerOrEqual(
+            { keys: 22, metalInWeapons: 100 },
+            { keys: 22, metalInWeapons: 90 },
+          ),
+        ).toEqual(false);
+      });
+    });
+
+    describe('compareTo', () => {
+      it('Is Equal', () => {
+        expect(
+          w.compareTo(
+            { keys: 12, metalInWeapons: 20 },
+            { keys: 12, metalInWeapons: 20 },
+          ),
+        ).toEqual(0);
+      });
+
+      it('Is Smaller', () => {
+        expect(
+          w.compareTo(
+            { keys: 12, metalInWeapons: 19 },
+            { keys: 12, metalInWeapons: 20 },
+          ),
+        ).toEqual(-1);
+      });
+
+      it('Is Equal', () => {
+        expect(
+          w.compareTo(
+            { keys: 12, metalInWeapons: 21 },
+            { keys: 12, metalInWeapons: 20 },
+          ),
+        ).toEqual(1);
+      });
     });
   });
 });
