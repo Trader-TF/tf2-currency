@@ -1,6 +1,6 @@
 {
   "name": "tf2-currency",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Set of tools that manage operations with tf2 currency.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,13 @@
     "type": "git",
     "url": "git+https://github.com/Trader-TF/tf2-currency.git"
   },
-  "keywords": ["tf2", "currency", "scrap", "refined metal", "keys"],
+  "keywords": [
+    "tf2",
+    "currency",
+    "scrap",
+    "refined metal",
+    "keys"
+  ],
   "author": "glencoco",
   "license": "MIT",
   "bugs": {
