@@ -143,6 +143,21 @@ export function isSmallerOrEqual(
   );
 }
 
+export function compareTo(
+  currencyA: ICurrency,
+  currencyB: ICurrency,
+): 1 | 0 | -1 {
+  if (isBigger(currencyA, currencyB)) {
+    return 1;
+  }
+
+  if (isSmaller(currencyA, currencyB)) {
+    return -1;
+  }
+
+  return 0;
+}
+
 export function c(currency: Partial<ICurrency>): Currency {
   return new Currency(currency);
 }

@@ -15,6 +15,7 @@ import {
   fixMetal,
   isWeaponizedCurrency,
   isClassicCurrency,
+  compareTo,
 } from './currency.helper';
 import { CurrencyError } from './currency.error';
 import { ICurrency, IWeaponizedCurrency } from './currency.interface';
@@ -221,15 +222,7 @@ export class Currency implements ICurrency, IWeaponizedCurrency {
   }
 
   compareTo(value: ICurrency): 1 | 0 | -1 {
-    if (this.isBigger(value)) {
-      return 1;
-    }
-
-    if (this.isSmaller(value)) {
-      return -1;
-    }
-
-    return 0;
+    return compareTo(this, value);
   }
 
   wIsEqual(currency: IWeaponizedCurrency) {
